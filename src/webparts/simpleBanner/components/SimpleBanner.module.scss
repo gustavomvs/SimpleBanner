@@ -1,0 +1,60 @@
+@import "~office-ui-fabric-react/dist/sass/References.scss";
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.bannerImg100 {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.bannerImg75 {
+  width: 75%;
+  border-radius: 8px;
+}
+
+.bannerImg50 {
+  width: 50%;
+  border-radius: 8px;
+}
+
+.bannerImg25 {
+  width: 25%;
+  border-radius: 8px;
+}
+
+.file {
+  width: 90%;
+  border: 1px black solid;
+}
+
+.previewImg {
+  display: flex;
+  max-width: 470px;
+}
+
+.buttonNewItem {
+  height: 20px;
+  margin: 8px;
+}
+
+.buttonNewItem:hover {
+  background-color: blue;
+  border-radius: 32px;
+  color: white;
+}
+
+.imagemExemploBanner {
+  height: 60%;
+  width: 100%;
+}
+
+.footerPanel {
+  display: flex;
+  justify-content: space-between;
+}

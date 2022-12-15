@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "simple-banner-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/simpleBanner/SimpleBannerWebPart.js",
+          "manifest": "./src/webparts/simpleBanner/SimpleBannerWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SimpleBannerWebPartStrings": "lib/webparts/simpleBanner/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

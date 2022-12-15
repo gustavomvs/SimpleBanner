@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "whd-simple-banner-client-side-solution",
+    "id": "b962308a-2039-44ee-b725-63c1557590a8",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.16.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "whd-simple-banner description"
+      },
+      "longDescription": {
+        "default": "whd-simple-banner description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "whd-simple-banner Feature",
+        "description": "The feature that activates elements of the whd-simple-banner solution.",
+        "id": "7bc1736b-5a0b-4c2e-9c17-157aa25897e2",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/whd-simple-banner.sppkg"
+  }
+}
