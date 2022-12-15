@@ -89,7 +89,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
 
   const meuInit = async (): Promise<void> => {
     if (simple.itemID ? simple.itemID : props.itemId) {
-      sp.web.lists
+      await sp.web.lists
         .getByTitle("SimpleBanners")
         .items.getById(simple.itemID ? simple.itemID : props.itemId)
         .select(
@@ -116,7 +116,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     meuInit();
-    console.log("Funcionou2");
+    console.log("Funcionou3");
   }, []);
 
   const changeTamanho = (
@@ -164,7 +164,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   const Save = async (): Promise<void> => {
     if (preview) {
       const fileResultContent = await file.downloadFileContent();
-      console.log(fileResultContent);
       const result = await sp.web
         .getFolderByServerRelativePath("SimpleBanners")
         .files.addUsingPath(
@@ -183,7 +182,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         tamanho: simple.tamanho,
       });
 
-      item
+      await item
         .select(
           "Id",
           "FileRef",
@@ -193,6 +192,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           "FileLeafRef"
         )()
         .then((res) => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           sp.web.lists
             .getByTitle("SimpleBanners")
             .items.getById(res.Id)
@@ -200,7 +200,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
               FileLeafRef: fileResultContent.name,
               FileRef: `/sites/wh_gustavo/SimpleBanners/${fileResultContent.name}`,
             })
-            .then((res2) => {
+            .then(() => {
               setSimple({
                 fileName: fileResultContent.name,
                 urlImage: `/sites/wh_gustavo/SimpleBanners/${fileResultContent.name}`,
@@ -215,7 +215,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         });
     } else {
       if (simple.itemID ? simple.itemID : props.itemId) {
-        sp.web.lists
+        await sp.web.lists
           .getByTitle("SimpleBanners")
           .items.getById(simple.itemID ? simple.itemID : props.itemId)
           .update({
