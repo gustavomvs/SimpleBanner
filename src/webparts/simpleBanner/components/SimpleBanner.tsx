@@ -71,7 +71,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   const simpleDefault: SimpleBanner = {
     fileName: null,
     urlImage: null,
-    itemID: null,
+    itemID: props.itemId,
     urlDestino: "",
     novaAba: true,
     tamanho: "100%",
@@ -88,10 +88,10 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   const [preview, setPreview] = useState("");
 
   const meuInit = async (): Promise<void> => {
-    if (simple.itemID ? simple.itemID : props.itemId) {
+    if (simple.itemID) {
       await sp.web.lists
         .getByTitle("SimpleBanners")
-        .items.getById(simple.itemID ? simple.itemID : props.itemId)
+        .items.getById(simple.itemID)
         .select(
           "Id",
           "FileRef",
@@ -157,6 +157,10 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
     } else {
       setPreview(oFile.previewDataUrl);
     }
+    // setSimple((old) => ({
+    //   ...old,
+    //   urlImage: preview,
+    // }));
     setFile(oFile);
   };
 
@@ -217,10 +221,10 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           props.updatePropety(res.Id);
         });
     } else {
-      if (simple.itemID ? simple.itemID : props.itemId) {
+      if (simple.itemID) {
         await sp.web.lists
           .getByTitle("SimpleBanners")
-          .items.getById(simple.itemID ? simple.itemID : props.itemId)
+          .items.getById(simple.itemID)
           .update({
             novaAba: simple.novaAba === false ? false : true,
             urlDestino: simple.urlDestino,
@@ -288,7 +292,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           }
           openPanel();
         }}
-        text={simple.urlImage ? "+ Atualizar item" : "+ Adicionar Item"}
+        text={"+ Novo item"}
         className={styles.buttonNewItem}
         styles={hostStyles}
       />
@@ -334,12 +338,12 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         {preview && (
           <img
             className={styles.previewImg}
-            src={preview && preview}
+            src={preview}
             alt="Imagem a ser adicionada"
           />
         )}
         <FilePicker
-          label="Imagem de fundo"
+          label="Imagem"
           bingAPIKey="<BING API KEY>"
           accepts={[".gif", ".jpg", ".jpeg", ".png"]}
           buttonIcon="FileImage"
@@ -362,9 +366,9 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         <TextField
           type="text"
           onChange={changeUrlDestino}
-          label="Url do Destino"
+          label="Url do destino"
           placeholder={simple.urlDestino && simple.urlDestino}
-          value={simpleTemp.urlDestino}
+          value={simple.urlDestino}
           styles={textFieldStyles}
         />
 
