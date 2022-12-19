@@ -116,7 +116,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     meuInit();
-    console.log("Funcionou3");
   }, []);
 
   const changeTamanho = (
@@ -141,7 +140,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
     }));
   };
 
-  function _onChange(
+  function changeNovaAba(
     _ev: React.MouseEvent<HTMLElement>,
     checked?: boolean
   ): void {
@@ -192,18 +191,22 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           "FileLeafRef"
         )()
         .then((res) => {
+          const newLink = res.FileRef.replace(
+            res.FileLeafRef,
+            fileResultContent.name
+          );
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           sp.web.lists
             .getByTitle("SimpleBanners")
             .items.getById(res.Id)
             .update({
               FileLeafRef: fileResultContent.name,
-              FileRef: `/sites/wh_gustavo/SimpleBanners/${fileResultContent.name}`,
+              FileRef: newLink,
             })
             .then(() => {
               setSimple({
                 fileName: fileResultContent.name,
-                urlImage: `/sites/wh_gustavo/SimpleBanners/${fileResultContent.name}`,
+                urlImage: newLink,
                 itemID: res.Id,
                 urlDestino: res.urlDestino,
                 novaAba: res.novaAba,
@@ -274,6 +277,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
 
   return (
     <div>
+      <h1>{props.itemId}</h1>
       <CommandButton
         onClick={() => {
           if (simple.itemID) {
@@ -370,7 +374,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           label="Abrir em nova aba?"
           onText="Sim"
           offText="Não"
-          onChange={_onChange}
+          onChange={changeNovaAba}
         />
       </Panel>
     </div>
