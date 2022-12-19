@@ -277,7 +277,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
 
   return (
     <div>
-      <h1>{props.itemId}</h1>
       <CommandButton
         onClick={() => {
           if (simple.itemID) {
