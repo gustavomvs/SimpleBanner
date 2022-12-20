@@ -51,7 +51,6 @@ const options: IDropdownOption[] = [
 ];
 
 interface SimpleBanner {
-  fileName: string;
   urlImage: string;
   itemID: number;
   urlDestino: string;
@@ -60,6 +59,7 @@ interface SimpleBanner {
 }
 
 interface SimpleBannerTemp {
+  urlImage: string;
   novaAba: boolean;
   urlDestino: string;
   tamanho: string;
@@ -69,7 +69,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   const sp = spfi().using(spSPFx(props.context));
 
   const simpleDefault: SimpleBanner = {
-    fileName: null,
     urlImage: null,
     itemID: props.itemId,
     urlDestino: "",
@@ -102,7 +101,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         )()
         .then((res) => {
           setSimple({
-            fileName: res.FileLeafRef,
             urlImage: res.FileRef,
             itemID: res.Id,
             urlDestino: res.urlDestino,
@@ -150,17 +148,22 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
     }));
   }
 
-  const changeImg = async (file: IFilePickerResult[]): Promise<void> => {
+  const changeImg = (file: IFilePickerResult[]): void => {
     const oFile = file[0];
     if (oFile.fileAbsoluteUrl && oFile.fileAbsoluteUrl.length > 0) {
       setPreview(oFile.fileAbsoluteUrl);
     } else {
       setPreview(oFile.previewDataUrl);
     }
-    // setSimple((old) => ({
-    //   ...old,
-    //   urlImage: preview,
-    // }));
+    console.log(simple);
+    console.log(oFile);
+    console.log(preview);
+    setSimple((old) => ({
+      ...old,
+      urlImage: oFile.previewDataUrl
+        ? oFile.previewDataUrl
+        : oFile.fileAbsoluteUrl,
+    }));
     setFile(oFile);
   };
 
@@ -169,13 +172,9 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
       const fileResultContent = await file.downloadFileContent();
       const result = await sp.web
         .getFolderByServerRelativePath("SimpleBanners")
-        .files.addUsingPath(
-          simple.fileName ? simple.fileName : fileResultContent.name,
-          fileResultContent,
-          {
-            Overwrite: true,
-          }
-        );
+        .files.addUsingPath(fileResultContent.name, fileResultContent, {
+          Overwrite: true,
+        });
 
       const item = await result.file.getItem();
 
@@ -195,21 +194,25 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           "FileLeafRef"
         )()
         .then((res) => {
+          const nameSplit = res.FileLeafRef.split(".");
+          const nameFinal = nameSplit[nameSplit.length - 1];
+          const nameInitial = res.FileLeafRef.slice(
+            0,
+            res.FileLeafRef.length - nameFinal.length - 1
+          ).slice(0, 200);
           const newLink = res.FileRef.replace(
             res.FileLeafRef,
-            fileResultContent.name
+            `${nameInitial}_${res.Id}_.${nameFinal}`
           );
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           sp.web.lists
             .getByTitle("SimpleBanners")
             .items.getById(res.Id)
             .update({
-              FileLeafRef: fileResultContent.name,
-              FileRef: newLink,
+              FileLeafRef: `${nameInitial}_${res.Id}_`,
             })
             .then(() => {
               setSimple({
-                fileName: fileResultContent.name,
                 urlImage: newLink,
                 itemID: res.Id,
                 urlDestino: res.urlDestino,
@@ -268,6 +271,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           setPreview("");
           setSimple((old) => ({
             ...old,
+            urlImage: simpleTemp.urlImage,
             urlDestino: simpleTemp.urlDestino,
             novaAba: simpleTemp.novaAba,
             tamanho: simpleTemp.tamanho,
@@ -285,6 +289,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         onClick={() => {
           if (simple.itemID) {
             setSimpleTemp({
+              urlImage: simple.urlImage,
               urlDestino: simple.urlDestino,
               novaAba: simple.novaAba,
               tamanho: simple.tamanho,
@@ -309,7 +314,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
                   ? styles.bannerImg75
                   : styles.bannerImg100
               }
-              src={`${simple.urlImage}?p=${new Date().getTime()}`}
+              src={`${simple.urlImage}`}
               alt="Imagem"
             />
           </div>
@@ -366,7 +371,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         <TextField
           type="text"
           onChange={changeUrlDestino}
-          label="Url do destino"
+          label="URL do destino"
           placeholder={simple.urlDestino && simple.urlDestino}
           value={simple.urlDestino}
           styles={textFieldStyles}

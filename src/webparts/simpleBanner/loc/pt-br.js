@@ -4,11 +4,11 @@ define([], function () {
     aparência: "Aparência",
     imagem: "Imagem",
     tamanhoDaImagem: "Tamanho da Imagem",
-    urlDoDestino: "Url do destino",
+    urlDoDestino: "URL do destino",
     abrirEmNovaAba: "Abrir em nova aba",
     nao: "Não",
     sim: "Sim",
     salvar: "Salvar",
-    cancelar: "cancelar",
+    cancelar: "Cancelar",
   };
 });
