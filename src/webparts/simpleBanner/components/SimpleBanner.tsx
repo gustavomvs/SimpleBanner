@@ -155,9 +155,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
     } else {
       setPreview(oFile.previewDataUrl);
     }
-    console.log(simple);
-    console.log(oFile);
-    console.log(preview);
     setSimple((old) => ({
       ...old,
       urlImage: oFile.previewDataUrl
