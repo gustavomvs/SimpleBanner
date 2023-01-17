@@ -1,4 +1,8 @@
-@import "~office-ui-fabric-react/dist/sass/References.scss";
+@import "../../../common/Common.module.scss";
+
+.textAccordion {
+  color: red;
+}
 
 .banner {
   display: flex;
@@ -6,6 +10,10 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+}
+
+.panelHeader {
+  font-size: $font-normal;
 }
 
 .bannerImg100 {
@@ -28,25 +36,24 @@
   border-radius: 8px;
 }
 
-.file {
-  width: 90%;
-  border: 1px black solid;
-}
-
 .previewImg {
   display: flex;
-  max-width: 470px;
+  max-width: 100%;
 }
 
 .buttonNewItem {
-  height: 20px;
   margin: 8px;
+  height: auto;
+  font-size: $font-small;
+  padding: 4px 16px;
 }
 
 .buttonNewItem:hover {
-  background-color: blue;
+  height: auto;
+  background-color: #7048e8;
   border-radius: 32px;
-  color: white;
+  color: $color-white;
+  box-shadow: $box-shadow;
 }
 
 .imagemExemploBanner {

@@ -1,13 +1,9 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
 import { Version } from "@microsoft/sp-core-library";
-import {
-  IPropertyPaneConfiguration,
-  PropertyPaneTextField,
-} from "@microsoft/sp-property-pane";
+import { IPropertyPaneConfiguration } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import { IReadonlyTheme } from "@microsoft/sp-component-base";
-
+import { PropertyPaneWebPartInformation } from "@pnp/spfx-property-controls/lib/PropertyPaneWebPartInformation";
 import * as strings from "SimpleBannerWebPartStrings";
 import SimpleBanner from "./components/SimpleBanner";
 import { ISimpleBannerProps } from "./components/ISimpleBannerProps";
@@ -15,12 +11,11 @@ import { ISimpleBannerProps } from "./components/ISimpleBannerProps";
 export interface ISimpleBannerWebPartProps {
   description: string;
   itemId: number;
+  fileName: string;
+  fileSize: number;
 }
 
 export default class SimpleBannerWebPart extends BaseClientSideWebPart<ISimpleBannerWebPartProps> {
-  _isDarkTheme: boolean = false;
-  _environmentMessage: string = "";
-
   public render(): void {
     const element: React.ReactElement<ISimpleBannerProps> = React.createElement(
       SimpleBanner,
@@ -30,78 +25,20 @@ export default class SimpleBannerWebPart extends BaseClientSideWebPart<ISimpleBa
         updatePropety: (id: number) => {
           this.properties.itemId = id;
         },
+        fileName: this.properties.fileName,
+        fileSize: this.properties.fileSize,
+        updateFileName: (filename: string) => {
+          this.properties.fileName = filename;
+        },
+        updateFileSize: (filesize: number) => {
+          this.properties.fileSize = filesize;
+        },
       }
     );
-
     ReactDom.render(element, this.domElement);
   }
 
-  protected onInit(): Promise<void> {
-    return this._getEnvironmentMessage().then((message) => {
-      this._environmentMessage = message;
-    });
-  }
-
-  private _getEnvironmentMessage(): Promise<string> {
-    if (!!this.context.sdks.microsoftTeams) {
-      // running in Teams, office.com or Outlook
-      return this.context.sdks.microsoftTeams.teamsJs.app
-        .getContext()
-        .then((context) => {
-          let environmentMessage: string = "";
-          switch (context.app.host.name) {
-            case "Office": // running in Office
-              environmentMessage = this.context.isServedFromLocalhost
-                ? strings.AppLocalEnvironmentOffice
-                : strings.AppOfficeEnvironment;
-              break;
-            case "Outlook": // running in Outlook
-              environmentMessage = this.context.isServedFromLocalhost
-                ? strings.AppLocalEnvironmentOutlook
-                : strings.AppOutlookEnvironment;
-              break;
-            case "Teams": // running in Teams
-              environmentMessage = this.context.isServedFromLocalhost
-                ? strings.AppLocalEnvironmentTeams
-                : strings.AppTeamsTabEnvironment;
-              break;
-            default:
-              throw new Error("Unknown host");
-          }
-
-          return environmentMessage;
-        });
-    }
-
-    return Promise.resolve(
-      this.context.isServedFromLocalhost
-        ? strings.AppLocalEnvironmentSharePoint
-        : strings.AppSharePointEnvironment
-    );
-  }
-
-  protected onThemeChanged(currentTheme: IReadonlyTheme | undefined): void {
-    if (!currentTheme) {
-      return;
-    }
-
-    this._isDarkTheme = !!currentTheme.isInverted;
-    const { semanticColors } = currentTheme;
-
-    if (semanticColors) {
-      this.domElement.style.setProperty(
-        "--bodyText",
-        semanticColors.bodyText || null
-      );
-      this.domElement.style.setProperty("--link", semanticColors.link || null);
-      this.domElement.style.setProperty(
-        "--linkHovered",
-        semanticColors.linkHovered || null
-      );
-    }
-  }
-
-  protected onDispose(): void {
+  onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
@@ -113,15 +50,19 @@ export default class SimpleBannerWebPart extends BaseClientSideWebPart<ISimpleBa
     return {
       pages: [
         {
-          header: {
-            description: strings.PropertyPaneDescription,
-          },
+          displayGroupsAsAccordion: true,
           groups: [
             {
-              groupName: strings.BasicGroupName,
+              groupName: strings.descriptionImage,
+              isCollapsed: true,
               groupFields: [
-                PropertyPaneTextField("description", {
-                  label: strings.DescriptionFieldLabel,
+                PropertyPaneWebPartInformation({
+                  description: this.properties.fileName
+                    ? `<div style="font-size: 1rem;">${strings.fileName}:</div><div style="font-size: 1rem;"><strong>${this.properties.fileName}</strong></div>
+                    <div style="font-size: 1rem;">${strings.fileSize}:</div><div style="font-size: 1rem;"><strong>${this.properties.fileSize}</strong></div>
+                    <div style="font-size: 1rem;">ID:</div><div><strong>${this.properties.itemId}</strong></div>`
+                    : `${strings.addImage}`,
+                  key: "webPartInfoId",
                 }),
               ],
             },

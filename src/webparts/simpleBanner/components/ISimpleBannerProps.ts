@@ -3,4 +3,8 @@ export interface ISimpleBannerProps {
   context: any;
   itemId: number;
   updatePropety: (id: number) => void;
+  fileName: string;
+  fileSize: number;
+  updateFileName: (filename: string) => void;
+  updateFileSize: (filesize: number) => void;
 }

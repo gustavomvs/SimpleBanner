@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/deploy-azure-storage.schema.json",
   "workingDir": "./release/assets/",
-  "account": "<!-- STORAGE ACCOUNT NAME -->",
+  "account": "whstorage1",
   "container": "whd-simple-banner",
-  "accessKey": "<!-- ACCESS KEY -->"
+  "accessKey": "vjC8iiTxcNkwqaaStZuiGRKFU6NvvlX4XJGCMh3/4W5SY6miliaGVOETSVzA3FeD2tweDZh021/KPxgNygaBSQ=="
 }

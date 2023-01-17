@@ -15,6 +15,7 @@ import {
 import { useBoolean } from "@fluentui/react-hooks";
 import { useState, useEffect } from "react";
 import {
+  ILabelStyleProps,
   ITextFieldStyles,
   ITooltipHostStyles,
   TextField,
@@ -28,19 +29,26 @@ import {
   Toggle,
   CommandButton,
   Panel,
-  PanelType,
+  ILabelStyles,
 } from "@fluentui/react";
+import * as strings from "SimpleBannerWebPartStrings";
 
 const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { width: "90%", marginBottom: "5px" },
+  fieldGroup: { marginBottom: "5px", fontSize: "1rem" },
+  subComponentStyles: { label: getLabelStyles },
 };
 
 const hostStyles: Partial<ITooltipHostStyles> = {
-  root: { height: "20px", margin: "8px" },
+  root: { height: "20px", margin: "8px", fontSize: "1rem" },
 };
 
 const dropdownStyles: Partial<IDropdownStyles> = {
-  dropdown: { width: "90%" },
+  dropdown: { fontSize: "1rem" },
+  label: { fontSize: "0.9rem" },
+};
+
+const toggleStyles: Partial<IDropdownStyles> = {
+  label: { fontSize: "0.9rem" },
 };
 
 const options: IDropdownOption[] = [
@@ -53,16 +61,26 @@ const options: IDropdownOption[] = [
 interface SimpleBanner {
   urlImage: string;
   itemID: number;
-  urlDestino: string;
-  novaAba: boolean;
-  tamanho: string;
+  urlDestiny: string;
+  newAbe: boolean;
+  size: string;
+  alt: string;
 }
 
 interface SimpleBannerTemp {
   urlImage: string;
-  novaAba: boolean;
-  urlDestino: string;
-  tamanho: string;
+  newAbe: boolean;
+  urlDestiny: string;
+  size: string;
+  alt: string;
+}
+
+function getLabelStyles(props: ILabelStyleProps): ILabelStyles {
+  return {
+    root: {
+      fontSize: "0.9rem",
+    },
+  };
 }
 
 const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
@@ -71,9 +89,10 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   const simpleDefault: SimpleBanner = {
     urlImage: null,
     itemID: props.itemId,
-    urlDestino: "",
-    novaAba: true,
-    tamanho: "100%",
+    urlDestiny: "",
+    newAbe: true,
+    size: "100%",
+    alt: "",
   };
 
   const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
@@ -94,18 +113,19 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         .select(
           "Id",
           "FileRef",
-          "novaAba",
-          "tamanho",
-          "urlDestino",
+          "newAbe",
+          "size",
+          "urlDestiny",
           "FileLeafRef"
         )()
         .then((res) => {
           setSimple({
             urlImage: res.FileRef,
             itemID: res.Id,
-            urlDestino: res.urlDestino,
-            novaAba: res.novaAba,
-            tamanho: res.tamanho,
+            urlDestiny: res.urlDestiny,
+            newAbe: res.newAbe,
+            size: res.size,
+            alt: res.alt,
           });
         });
     }
@@ -116,7 +136,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
     meuInit();
   }, []);
 
-  const changeTamanho = (
+  const changesize = (
     event: React.FormEvent<HTMLDivElement>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     option?: any,
@@ -124,33 +144,43 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
   ): void => {
     setSimple((old) => ({
       ...old,
-      tamanho: option.text,
+      size: option.text,
     }));
   };
 
-  const changeUrlDestino = (
+  const changeurlDestiny = (
     event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     newValue?: string
   ): void => {
     setSimple((old) => ({
       ...old,
-      urlDestino: newValue,
+      urlDestiny: newValue,
     }));
   };
 
-  function changeNovaAba(
+  function changenewAbe(
     _ev: React.MouseEvent<HTMLElement>,
     checked?: boolean
   ): void {
     setSimple((old) => ({
       ...old,
-      novaAba: checked,
+      newAbe: checked,
     }));
   }
 
+  const changeAlt = (
+    event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    newValue?: string
+  ): void => {
+    setSimple((old) => ({
+      ...old,
+      alt: newValue,
+    }));
+  };
+
   const changeImg = (file: IFilePickerResult[]): void => {
     const oFile = file[0];
-    if (oFile.fileAbsoluteUrl && oFile.fileAbsoluteUrl.length > 0) {
+    if (oFile.fileAbsoluteUrl) {
       setPreview(oFile.fileAbsoluteUrl);
     } else {
       setPreview(oFile.previewDataUrl);
@@ -176,20 +206,14 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
       const item = await result.file.getItem();
 
       await item.update({
-        novaAba: simple.novaAba,
-        urlDestino: simple.urlDestino,
-        tamanho: simple.tamanho,
+        newAbe: simple.newAbe,
+        urlDestiny: simple.urlDestiny,
+        size: simple.size,
+        alt: simple.alt,
       });
 
       await item
-        .select(
-          "Id",
-          "FileRef",
-          "novaAba",
-          "tamanho",
-          "urlDestino",
-          "FileLeafRef"
-        )()
+        .select("Id", "FileLeafRef")()
         .then((res) => {
           const nameSplit = res.FileLeafRef.split(".");
           const nameFinal = nameSplit[nameSplit.length - 1];
@@ -197,10 +221,6 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
             0,
             res.FileLeafRef.length - nameFinal.length - 1
           ).slice(0, 200);
-          const newLink = res.FileRef.replace(
-            res.FileLeafRef,
-            `${nameInitial}_${res.Id}_.${nameFinal}`
-          );
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           sp.web.lists
             .getByTitle("SimpleBanners")
@@ -209,16 +229,15 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
               FileLeafRef: `${nameInitial}_${res.Id}_`,
             })
             .then(() => {
-              setSimple({
-                urlImage: newLink,
+              setSimple((old) => ({
+                ...old,
                 itemID: res.Id,
-                urlDestino: res.urlDestino,
-                novaAba: res.novaAba,
-                tamanho: res.tamanho,
-              });
+              }));
             });
 
           props.updatePropety(res.Id);
+          props.updateFileName(file.fileName);
+          props.updateFileSize(file.fileSize);
         });
     } else {
       if (simple.itemID) {
@@ -226,28 +245,28 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           .getByTitle("SimpleBanners")
           .items.getById(simple.itemID)
           .update({
-            novaAba: simple.novaAba === false ? false : true,
-            urlDestino: simple.urlDestino,
-            tamanho: simple.tamanho,
+            newAbe: simple.newAbe === false ? false : true,
+            urlDestiny: simple.urlDestiny,
+            size: simple.size,
           })
           .then((res) => {
             setSimple((old) => ({
               ...old,
-              urlDestino: simple.urlDestino,
-              novaAba: simple.novaAba,
-              tamanho: simple.tamanho,
+              urlDestiny: simple.urlDestiny,
+              newAbe: simple.newAbe,
+              size: simple.size,
+              alt: simple.alt,
             }));
           });
       }
     }
-
     dismissPanel();
     setPreview("");
   };
 
   const onClickBanner = (): void => {
-    if (simple.urlDestino) {
-      window.open(simple.urlDestino, simple.novaAba ? "_blank" : "_self");
+    if (simple.urlDestiny) {
+      window.open(simple.urlDestiny, simple.newAbe ? "_blank" : "_self");
     }
   };
 
@@ -260,7 +279,7 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           Save();
         }}
       >
-        Salvar
+        {strings.save}
       </DefaultButton>
       <PrimaryButton
         onClick={() => {
@@ -269,13 +288,13 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           setSimple((old) => ({
             ...old,
             urlImage: simpleTemp.urlImage,
-            urlDestino: simpleTemp.urlDestino,
-            novaAba: simpleTemp.novaAba,
-            tamanho: simpleTemp.tamanho,
+            urlDestiny: simpleTemp.urlDestiny,
+            newAbe: simpleTemp.newAbe,
+            size: simpleTemp.size,
           }));
         }}
       >
-        Cancelar
+        {strings.cancel}
       </PrimaryButton>
     </div>
   );
@@ -287,14 +306,15 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           if (simple.itemID) {
             setSimpleTemp({
               urlImage: simple.urlImage,
-              urlDestino: simple.urlDestino,
-              novaAba: simple.novaAba,
-              tamanho: simple.tamanho,
+              urlDestiny: simple.urlDestiny,
+              newAbe: simple.newAbe,
+              size: simple.size,
+              alt: simple.alt,
             });
           }
           openPanel();
         }}
-        text={"+ Novo item"}
+        text={`+ ${!simple.urlImage ? strings.newItem : strings.editItem}`}
         className={styles.buttonNewItem}
         styles={hostStyles}
       />
@@ -303,37 +323,36 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           <div className={styles.banner} onClick={onClickBanner}>
             <img
               className={
-                simple.tamanho === "25%"
+                simple.size === "25%"
                   ? styles.bannerImg25
-                  : simple.tamanho === "50%"
+                  : simple.size === "50%"
                   ? styles.bannerImg50
-                  : simple.tamanho === "75%"
+                  : simple.size === "75%"
                   ? styles.bannerImg75
                   : styles.bannerImg100
               }
-              src={`${simple.urlImage}`}
-              alt="Imagem"
+              src={simple.urlImage}
+              alt={simple.alt}
             />
           </div>
         ) : (
           <img
             className={styles.imagemExemploBanner}
-            alt="imagem sem nada"
+            alt="Imagem sem Banner adicionado"
             src="https://whstorage2.blob.core.windows.net/brand/img/bannerPlace.svg"
           />
         )}
       </section>
 
       <Panel
-        type={PanelType.custom}
-        customWidth={"500px"}
-        headerText="Aparência"
+        headerText={strings.appearance}
+        headerClassName={styles.panelHeader}
         isOpen={isOpen}
         onDismiss={() => {
           dismissPanel();
           setPreview("");
         }}
-        closeButtonAriaLabel="Close"
+        closeButtonAriaLabel={strings.close}
         isFooterAtBottom={true}
         onRenderFooterContent={onRenderFooterContent}
       >
@@ -341,11 +360,12 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
           <img
             className={styles.previewImg}
             src={preview}
-            alt="Imagem a ser adicionada"
+            alt="Imagem a ser adicionada ao Banner"
           />
         )}
         <FilePicker
-          label="Imagem"
+          buttonLabel={strings.chooseFile}
+          label={strings.image}
           bingAPIKey="<BING API KEY>"
           accepts={[".gif", ".jpg", ".jpeg", ".png"]}
           buttonIcon="FileImage"
@@ -357,29 +377,39 @@ const Simplebanner: React.FunctionComponent<ISimpleBannerProps> = (props) => {
         />
 
         <Dropdown
-          placeholder={simple.tamanho ? simple.tamanho : "100%"}
-          label="Tamanho da imagem"
+          placeholder={simple.size ? simple.size : "100%"}
+          label={strings.sizeOfImage}
           options={options}
           styles={dropdownStyles}
-          onChange={changeTamanho}
-          defaultValue={simple.tamanho}
+          onChange={changesize}
+          defaultValue={simple.size}
         />
 
         <TextField
           type="text"
-          onChange={changeUrlDestino}
-          label="URL do destino"
-          placeholder={simple.urlDestino && simple.urlDestino}
-          value={simple.urlDestino}
+          onChange={changeurlDestiny}
+          label={strings.urlDestiny}
+          placeholder={simple.urlDestiny && simple.urlDestiny}
+          value={simple.urlDestiny}
           styles={textFieldStyles}
         />
 
         <Toggle
-          defaultChecked={simple.novaAba === false ? false : true}
-          label="Abrir em nova aba?"
+          defaultChecked={simple.newAbe === false ? false : true}
+          label={strings.openEmNewAbe}
           onText="Sim"
           offText="Não"
-          onChange={changeNovaAba}
+          onChange={changenewAbe}
+          styles={toggleStyles}
+        />
+
+        <TextField
+          type="text"
+          onChange={changeAlt}
+          label="Alt"
+          placeholder={simple.alt && simple.alt}
+          value={simple.alt}
+          styles={textFieldStyles}
         />
       </Panel>
     </div>

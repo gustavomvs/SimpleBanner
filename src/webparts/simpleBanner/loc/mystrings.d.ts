@@ -1,18 +1,24 @@
 declare interface ISimpleBannerWebPartStrings {
-  PropertyPaneDescription: string;
-  BasicGroupName: string;
-  DescriptionFieldLabel: string;
-  AppLocalEnvironmentSharePoint: string;
-  AppLocalEnvironmentTeams: string;
-  AppLocalEnvironmentOffice: string;
-  AppLocalEnvironmentOutlook: string;
-  AppSharePointEnvironment: string;
-  AppTeamsTabEnvironment: string;
-  AppOfficeEnvironment: string;
-  AppOutlookEnvironment: string;
+  newItem: string;
+  appearance: string;
+  image: string;
+  sizeOfImage: string;
+  urlDestiny: string;
+  openEmNewAbe: string;
+  no: string;
+  yes: string;
+  save: string;
+  cancel: string;
+  descriptionImage: string;
+  close: string;
+  fileName: string;
+  fileSize: string;
+  editItem: string;
+  addImage: string;
+  chooseFile: string;
 }
 
-declare module 'SimpleBannerWebPartStrings' {
+declare module "SimpleBannerWebPartStrings" {
   const strings: ISimpleBannerWebPartStrings;
   export = strings;
 }
